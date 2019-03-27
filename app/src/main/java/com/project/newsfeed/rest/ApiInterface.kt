@@ -14,8 +14,8 @@ interface ApiInterface {
     @GET("svc/search/v2/articlesearch.json")
     fun searchArticles(@Query("q")query : String, @Query("page")currentPage:Int, @Query("api-key") apiKey : String = "7tHQW9v8rNg62sWmdxYmOyKXcdiFlkTR") : Call<ResponseModel>
 
-    @GET("svc/news/v3/content/all/all.json?")
-    fun getRecent(@Query("page")currentPage:Int, @Query("api-key") apiKey : String = "7tHQW9v8rNg62sWmdxYmOyKXcdiFlkTR") : Call<ResponseModel>
+    @GET("svc/search/v2/articlesearch.json")
+    fun getRecent(@Query("page")currentPage:Int,@Query("sort") sort : String = "newest", @Query("api-key") apiKey : String = "7tHQW9v8rNg62sWmdxYmOyKXcdiFlkTR") : Call<ResponseModel>
     companion object {
 
         val instance: ApiInterface by lazy {

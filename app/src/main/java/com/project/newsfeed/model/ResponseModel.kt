@@ -18,9 +18,17 @@ class HeadLineModel{
     var main : String = ""
 }
 
+class MultimediaModel{
+    @Expose
+    var url : String = ""
+
+}
+
 data class NewsModel (
+    var title:String  = "",
     var web_url : String = "",
     var snippet : String ="",
     var pub_date : String ="",
-    var headline : HeadLineModel = HeadLineModel()
+    var headline : HeadLineModel = HeadLineModel(),
+    var multimedia : List<MultimediaModel> = mutableListOf()
 ) : Serializable
