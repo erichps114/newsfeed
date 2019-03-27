@@ -4,16 +4,18 @@ import android.os.Bundle
 import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
 import com.project.newsfeed.component.CustomWebView
+import com.project.newsfeed.component.SwipeListener
+import com.project.newsfeed.utility.info
+import com.project.newsfeed.utility.toast
 
-class WebViewActivity : AppCompatActivity() {
-    private val mWebView by lazy { CustomWebView(this) }
+class WebViewActivity : AppCompatActivity(), SwipeListener {
+    private val mWebView by lazy { CustomWebView(this,this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(mWebView)
 
         if (intent.hasExtra("news_url")){
             mWebView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
-            mWebView.settings.javaScriptEnabled = true
             mWebView.loadUrl(intent.getStringExtra("news_url"))
         }
 
@@ -24,4 +26,19 @@ class WebViewActivity : AppCompatActivity() {
         else super.onBackPressed()
     }
 
+    override fun onSwipeLeft() {
+        info("Swipe lffet")
+    }
+
+    override fun onSwipeRight() {
+        info("Swipe right")
+    }
+
+    override fun onSwipeTop() {
+        info("swipe top")
+    }
+
+    override fun onSwipeBottom() {
+        info("swipe bottom")
+    }
 }

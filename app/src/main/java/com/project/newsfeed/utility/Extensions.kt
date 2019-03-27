@@ -3,6 +3,7 @@ package com.project.newsfeed.utility
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,3 +33,8 @@ fun RecyclerView.attachLoadMore(mList : List<Any>, onLoadMore : ()->Unit){
 }
 
 fun Context.toast(string: String) = Handler(Looper.getMainLooper()).post{ Toast.makeText(this,string, Toast.LENGTH_SHORT).show()}
+
+fun Any.info (msg : String, tag : String = javaClass.simpleName) = Log.i(tag,msg)
+fun Any.debug (msg : String , tag : String = javaClass.simpleName) = Log.d(tag,msg)
+fun Any.error (msg : String , tag : String = javaClass.simpleName)= Log.e(tag,msg)
+fun Any.warning (msg : String , tag : String = javaClass.simpleName) = Log.w(tag,msg)

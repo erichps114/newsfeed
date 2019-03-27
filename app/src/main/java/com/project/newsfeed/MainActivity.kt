@@ -1,26 +1,22 @@
 package com.project.newsfeed
 
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.project.newsfeed.component.SnippetAdapter
+import com.project.newsfeed.contract.MainContract
 import com.project.newsfeed.model.NewsModel
-import com.project.newsfeed.model.ResponseModel
-import com.project.newsfeed.rest.ApiInterface
+import com.project.newsfeed.presenter.MainPresenter
 import com.project.newsfeed.utility.attachLoadMore
+import com.project.newsfeed.utility.toast
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
 
     private val mList = mutableListOf<NewsModel>()
     private val mAdapter by lazy { SnippetAdapter(mList,this) }
-    private var currentPage = 0
+    private val mPresenter : MainContract.Presenter = MainPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,38 +25,40 @@ class MainActivity : AppCompatActivity() {
         val itemPerRow = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 1 else 4
         rvFeed.layoutManager = GridLayoutManager(this,itemPerRow)
         rvFeed.adapter = mAdapter
-
-        performQuery()
         rvFeed.attachLoadMore(mList){
             onLoadMore()
         }
 
+        refresh.setOnRefreshListener {
+            onRefresh()
+        }
 
+        onLoadMore()
     }
 
-    private fun performQuery(){
-        val callApi = ApiInterface.instance.getRecent(currentPage)
-        callApi.enqueue(object : Callback<ResponseModel>{
-            override fun onFailure(call: Call<ResponseModel>, t: Throwable) {
-                Log.e("ERICH", "ERROR")
-            }
-
-            override fun onResponse(call: Call<ResponseModel>, response: Response<ResponseModel>) {
-                if (response.code() != 200) {Log.e("ERICH","Failed"); return}
-                currentPage++
-                val lastPos = mList.size
-
-                val docs = response.body()?.response?.docs
-                if (!docs.isNullOrEmpty()){
-                    docs.forEach {mList.add(it)}
-                    mAdapter.notifyItemRangeInserted(lastPos,docs.size)
-                }
-
-            }
-        })
+    private fun onLoadMore(isForceRefresh : Boolean = false){
+        mPresenter.getRecentNews(isForceRefresh)
     }
 
-    private fun onLoadMore(){
-        performQuery()
+    private fun onRefresh(){
+        mList.clear()
+        mAdapter.notifyDataSetChanged()
+        onLoadMore(true)
+    }
+
+    override fun showLoading(isShow: Boolean) {
+        //TODO : Show loading
+    }
+
+    override fun errorToast(message: String) {
+        toast(message)
+    }
+
+    override fun onDataResult(list: List<NewsModel>, totalResult: Int) {
+        refresh.isRefreshing = false
+        if (totalResult == 0) return
+        val lastIndex = mList.size
+        mList.addAll(list)
+        mAdapter.notifyItemRangeInserted(lastIndex,totalResult)
     }
 }

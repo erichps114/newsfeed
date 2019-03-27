@@ -4,13 +4,19 @@ import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.webkit.WebView
-import com.project.newsfeed.utility.toast
 
 /**
  * Created by ErichPS on 27/03/2019.
  */
 
-class CustomWebView(private val ctx : Context) : WebView(ctx){
+class CustomWebView(ctx : Context) : WebView(ctx){
+    private var swipeListener : SwipeListener? = null
+    constructor(ctx : Context, swipeListener: SwipeListener) : this(ctx) {
+        this.swipeListener = swipeListener
+    }
+
+    private val swipeThreshold = 100
+    private val swipeVelocityThreshold = 100
 
 
     private val gestureDetector = GestureDetector(ctx,object : GestureDetector.SimpleOnGestureListener(){
@@ -19,17 +25,35 @@ class CustomWebView(private val ctx : Context) : WebView(ctx){
         }
 
         override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-            return if (e1!=null && e2 !=null){
-                if (e1.rawX > e2.rawX){
-                    ctx.toast("Swipe left")
-                } else {
-                    ctx.toast("swipe righrt")
+            if (e1 == null || e2 == null) return super.onFling(e1, e2, velocityX, velocityY)
+            var result = false
+            try {
+                val diffY = e2.y - e1.y
+                val diffX = e2.x - e1.x
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (Math.abs(diffX) > swipeThreshold && Math.abs(velocityX) > swipeVelocityThreshold) {
+                        if (diffX > 0) {
+                            swipeListener?.onSwipeRight()
+                        } else {
+                            swipeListener?.onSwipeLeft()
+                        }
+                        result = true
+                    }
+                } else if (Math.abs(diffY) > swipeThreshold && Math.abs(velocityY) > swipeVelocityThreshold) {
+                    if (diffY > 0) {
+                        swipeListener?.onSwipeBottom()
+                        flingScroll(0,-2000)
+                    } else {
+                        swipeListener?.onSwipeTop()
+                        flingScroll(0,2000)
+                    }
+                    result = false
                 }
-
-                true
-            } else {
-                super.onFling(e1, e2, velocityX, velocityY)
+            } catch (exception: Exception) {
+                exception.printStackTrace()
             }
+
+            return result
         }
     })
 
@@ -37,4 +61,11 @@ class CustomWebView(private val ctx : Context) : WebView(ctx){
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return gestureDetector.onTouchEvent(event)
     }
+}
+
+interface SwipeListener{
+    fun onSwipeLeft()
+    fun onSwipeRight()
+    fun onSwipeTop()
+    fun onSwipeBottom()
 }
