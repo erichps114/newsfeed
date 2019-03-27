@@ -11,7 +11,7 @@ interface MainContract {
     }
 
     interface Presenter{
-        fun getRecentNews(isForceRefresh : Boolean)
+        fun getRecentNews(context: Context,isForceRefresh : Boolean)
         fun saveList(list:List<NewsModel>, context : Context)
     }
 }

@@ -2,6 +2,7 @@ package com.project.newsfeed.utility
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
@@ -63,7 +64,10 @@ inline fun <reified T:Any> SharedPreferences.getValue(key:String,defaultValue : 
 }
 
 fun Context.toast(string: String) = Handler(Looper.getMainLooper()).post{ Toast.makeText(this,string, Toast.LENGTH_SHORT).show()}
-
+fun Context.isConnected() : Boolean{
+    val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return (cm.activeNetworkInfo!= null && cm.activeNetworkInfo.isConnected)
+}
 fun Any.info (msg : String, tag : String = javaClass.simpleName) = Log.i(tag,msg)
 fun Any.debug (msg : String , tag : String = javaClass.simpleName) = Log.d(tag,msg)
 fun Any.error (msg : String , tag : String = javaClass.simpleName)= Log.e(tag,msg)

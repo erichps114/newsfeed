@@ -31,4 +31,13 @@ data class NewsModel (
     var pub_date : String ="",
     var headline : HeadLineModel = HeadLineModel(),
     var multimedia : List<MultimediaModel> = mutableListOf()
-) : Serializable
+) : Serializable{
+    override fun equals(other: Any?): Boolean {
+        if (other !is NewsModel) return false
+        return other.web_url == this.web_url
+    }
+
+    override fun hashCode(): Int {
+        return web_url.hashCode()
+    }
+}

@@ -1,6 +1,7 @@
 package com.project.newsfeed.component
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.webkit.WebView
@@ -9,17 +10,18 @@ import android.webkit.WebView
  * Created by ErichPS on 27/03/2019.
  */
 
-class CustomWebView(ctx : Context) : WebView(ctx){
-    private var swipeListener : SwipeListener? = null
-    constructor(ctx : Context, swipeListener: SwipeListener) : this(ctx) {
-        this.swipeListener = swipeListener
-    }
+class CustomWebView : WebView{
+    var swipeListener : SwipeListener? = null
+    constructor(ctx : Context) : super(ctx)
+    constructor(ctx : Context, attrs : AttributeSet) : super(ctx,attrs)
+    constructor(ctx : Context, attrs : AttributeSet, defStyles : Int) : super(ctx,attrs,defStyles)
+    constructor(ctx : Context, attrs : AttributeSet, defStyles : Int, defStyleRef : Int) : super(ctx,attrs,defStyles,defStyleRef)
 
     private val swipeThreshold = 100
     private val swipeVelocityThreshold = 100
 
 
-    private val gestureDetector = GestureDetector(ctx,object : GestureDetector.SimpleOnGestureListener(){
+    private val gestureDetector = GestureDetector(context,object : GestureDetector.SimpleOnGestureListener(){
         override fun onDown(e: MotionEvent?): Boolean {
             return true
         }

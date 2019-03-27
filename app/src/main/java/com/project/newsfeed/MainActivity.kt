@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     private fun onLoadMore(isForceRefresh : Boolean = false){
-        mPresenter.getRecentNews(isForceRefresh)
+        mPresenter.getRecentNews(applicationContext,isForceRefresh)
     }
 
     private fun onRefresh(){

@@ -2,24 +2,32 @@ package com.project.newsfeed
 
 import android.os.Bundle
 import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import com.project.newsfeed.component.CustomWebView
 import com.project.newsfeed.component.SwipeListener
 import com.project.newsfeed.model.NewsModel
 import com.project.newsfeed.utility.Storage
 import com.project.newsfeed.utility.info
+import kotlinx.android.synthetic.main.activity_webview.*
 
 class WebViewActivity : AppCompatActivity(), SwipeListener {
-    private val mWebView by lazy { CustomWebView(this,this) }
     private var mList : List<NewsModel> = mutableListOf()
     private var currentPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(mWebView)
+        setContentView(R.layout.activity_webview)
 
+        mWebView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+        mWebView.settings.setAppCachePath(applicationContext.cacheDir.absolutePath)
+        mWebView.swipeListener = this
+        mWebView.webViewClient = object : WebViewClient(){
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                Storage.getInstance(applicationContext).saveCached(mList[currentPosition])
+            }
+        }
         if (intent.hasExtra("news_url")){
-            mWebView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
-            mWebView.settings.setAppCachePath(applicationContext.cacheDir.absolutePath)
             mWebView.loadUrl(intent.getStringExtra("news_url"))
         }
 
@@ -29,11 +37,10 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
 
         mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
 
-    }
+        favoriteIcon.setOnClickListener {
 
-    override fun onBackPressed() {
-        if (mWebView.canGoBack()) mWebView.goBack()
-        else super.onBackPressed()
+        }
+
     }
 
     override fun onSwipeLeft() {
