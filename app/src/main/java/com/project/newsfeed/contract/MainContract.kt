@@ -1,5 +1,6 @@
 package com.project.newsfeed.contract
 
+import android.content.Context
 import com.project.newsfeed.model.NewsModel
 
 interface MainContract {
@@ -11,5 +12,6 @@ interface MainContract {
 
     interface Presenter{
         fun getRecentNews(isForceRefresh : Boolean)
+        fun saveList(list:List<NewsModel>, context : Context)
     }
 }

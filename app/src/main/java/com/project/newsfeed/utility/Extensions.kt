@@ -1,8 +1,10 @@
 package com.project.newsfeed.utility
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -30,6 +32,34 @@ fun RecyclerView.attachLoadMore(mList : List<Any>, onLoadMore : ()->Unit){
             }
         }
     })
+}
+
+fun Context.getDefaultPreferences() : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+inline fun SharedPreferences.editPref(operation:(SharedPreferences.Editor) -> Unit){
+    val editor = this.edit()
+    operation(editor)
+    editor.apply()
+}
+fun SharedPreferences.setValue(key:String, value : Any?){
+    when (value){
+        is String? -> editPref { it.putString(key, value) }
+        is Int -> editPref { it.putInt(key, value) }
+        is Boolean -> editPref { it.putBoolean(key,value) }
+        is Float -> editPref { it.putFloat(key,value) }
+        is Long -> editPref { it.putLong(key,value) }
+        else   -> throw UnsupportedOperationException("Hanya mendukung string, integer, bool, float dan long")
+    }
+}
+
+inline fun <reified T:Any> SharedPreferences.getValue(key:String,defaultValue : T? = null) : T{
+    return when(T::class){
+        String::class -> getString(key, defaultValue as? String?:"") as T
+        Int::class -> getInt(key, defaultValue as? Int?:-1) as T
+        Boolean::class -> getBoolean(key, defaultValue as? Boolean?:false) as T
+        Float::class -> getFloat(key, defaultValue as? Float?:-1f) as T
+        Long::class ->getLong(key, defaultValue as? Long?:-1) as T
+        else -> throw UnsupportedOperationException("Hanya mendukung string, integer, bool, float dan long")
+    }
 }
 
 fun Context.toast(string: String) = Handler(Looper.getMainLooper()).post{ Toast.makeText(this,string, Toast.LENGTH_SHORT).show()}

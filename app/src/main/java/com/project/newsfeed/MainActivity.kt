@@ -60,5 +60,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         val lastIndex = mList.size
         mList.addAll(list)
         mAdapter.notifyItemRangeInserted(lastIndex,totalResult)
+
+        mPresenter.saveList(mList,applicationContext)
     }
 }

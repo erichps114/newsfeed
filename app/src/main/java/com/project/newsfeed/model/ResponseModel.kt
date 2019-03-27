@@ -13,12 +13,12 @@ class Container {
     var docs : List<NewsModel> = mutableListOf()
 }
 
-class HeadLineModel{
+class HeadLineModel : Serializable{
     @Expose
     var main : String = ""
 }
 
-class MultimediaModel{
+class MultimediaModel : Serializable{
     @Expose
     var url : String = ""
 
