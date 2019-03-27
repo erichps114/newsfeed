@@ -12,6 +12,7 @@ import com.project.newsfeed.utility.info
 class WebViewActivity : AppCompatActivity(), SwipeListener {
     private val mWebView by lazy { CustomWebView(this,this) }
     private var mList : List<NewsModel> = mutableListOf()
+    private var currentPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(mWebView)
@@ -20,6 +21,10 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
             mWebView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
             mWebView.settings.setAppCachePath(applicationContext.cacheDir.absolutePath)
             mWebView.loadUrl(intent.getStringExtra("news_url"))
+        }
+
+        if (intent.hasExtra("currentPosition")){
+            currentPosition = intent.getIntExtra("currentPosition",0)
         }
 
         mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
@@ -32,11 +37,17 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
     }
 
     override fun onSwipeLeft() {
-        info("Swipe lffet")
+        if (mList.isNotEmpty() && currentPosition + 1 < mList.size){
+            currentPosition++
+            mWebView.loadUrl(mList[currentPosition].web_url)
+        }
     }
 
     override fun onSwipeRight() {
-        info("Swipe right")
+        if (currentPosition > 0 && mList.isNotEmpty()){
+            currentPosition--
+            mWebView.loadUrl(mList[currentPosition].web_url)
+        }
     }
 
     override fun onSwipeTop() {
