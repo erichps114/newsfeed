@@ -19,7 +19,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private val mList = mutableListOf<NewsModel>()
-    private val mAdapter by lazy { SnippetAdapter(mList) }
+    private val mAdapter by lazy { SnippetAdapter(mList,this) }
     private var currentPage = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {

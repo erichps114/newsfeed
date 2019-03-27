@@ -1,5 +1,9 @@
 package com.project.newsfeed.utility
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,3 +30,5 @@ fun RecyclerView.attachLoadMore(mList : List<Any>, onLoadMore : ()->Unit){
         }
     })
 }
+
+fun Context.toast(string: String) = Handler(Looper.getMainLooper()).post{ Toast.makeText(this,string, Toast.LENGTH_SHORT).show()}
