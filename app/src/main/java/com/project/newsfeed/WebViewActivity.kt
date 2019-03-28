@@ -37,13 +37,16 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
             currentPosition = intent.getIntExtra("currentPosition",0)
         }
 
-        if (intent.hasExtra("callingActivity")){
-            if (intent.getStringExtra("callingActivity").contains("FavoriteActivity"))
-                mList = Storage.getInstance(applicationContext).getFavoriteNews().toList()
-            else
-                mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
+        mList = if (intent.hasExtra("callingActivity")){
+            val callingAct = intent.getStringExtra("callingActivity")
+            when {
+                callingAct.contains("FavoriteActivity") -> Storage.getInstance(applicationContext).getFavoriteNews().toList()
+                callingAct.contains("SearchActivity") -> Storage.getInstance(applicationContext).getRecentSearchResults()
+                else -> Storage.getInstance(applicationContext).getRecentlySavedNews()
+            }
+
         } else {
-            mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
+            Storage.getInstance(applicationContext).getRecentlySavedNews()
         }
 
         favoriteIcon.setOnClickListener {

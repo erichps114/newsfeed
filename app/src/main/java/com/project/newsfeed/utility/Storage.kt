@@ -10,6 +10,7 @@ class Storage(private val context : Context) {
 
     private val gson = Gson()
     private val mRecentNews = mutableListOf<NewsModel>()
+    private val mRecentSearchQuery = mutableListOf<NewsModel>()
     fun getRecentlySavedNews() : List<NewsModel> {
         if (mRecentNews.isNotEmpty()) return mRecentNews.toList()
         val typeToken = object : TypeToken<List<NewsModel>>(){}.type
@@ -24,6 +25,12 @@ class Storage(private val context : Context) {
     fun getCached() : HashSet<NewsModel> {
         val typeToken = object : TypeToken<HashSet<NewsModel>>(){}.type
         return gson.fromJson<HashSet<NewsModel>>(context.getDefaultPreferences().getValue("cached","[]"),typeToken)
+    }
+
+    fun getRecentSearchResults() : List<NewsModel>{
+        val retval = mutableListOf<NewsModel>()
+        retval.addAll(mRecentSearchQuery)
+        return retval
     }
 
     fun saveRecentNews (list : List<NewsModel>){
@@ -54,5 +61,10 @@ class Storage(private val context : Context) {
         set.add(news)
         val jsonRep = gson.toJson(set)
         context.getDefaultPreferences().setValue("cached",jsonRep)
+    }
+
+    fun saveRecentSearchQuery (list : List<NewsModel>){
+        mRecentSearchQuery.clear()
+        mRecentSearchQuery.addAll(list)
     }
 }

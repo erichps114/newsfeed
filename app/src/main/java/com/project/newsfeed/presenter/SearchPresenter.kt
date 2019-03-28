@@ -2,6 +2,7 @@ package com.project.newsfeed.presenter
 
 import android.content.Context
 import com.project.newsfeed.contract.MainContract
+import com.project.newsfeed.contract.SearchContract
 import com.project.newsfeed.model.NewsModel
 import com.project.newsfeed.model.ResponseModel
 import com.project.newsfeed.rest.ApiInterface
@@ -12,28 +13,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainPresenter (private val mView : MainContract.View) : MainContract.Presenter {
+class SearchPresenter (private val mView : SearchContract.View) : SearchContract.Presenter {
     private var currentPage = 0
     private var isQuerying = false
-    private var isCacheLoaded = false
-    override fun getRecentNews(context: Context,isForceRefresh : Boolean) {
+    override fun searchNews(context: Context,query : String) {
         if (!context.isConnected() ){
-            if(isCacheLoaded){
-                mView.onDataResult(mutableListOf(),0)
-            }
-            info("Load cache")
-            isCacheLoaded = true
-            val cachedNews = Storage.getInstance(context).getCached().toList()
-            mView.onDataResult(cachedNews,cachedNews.size)
+            mView.errorToast("Not connected")
             return
         }
 
 
         if (isQuerying) return
-        if (isForceRefresh) currentPage = 0
         isQuerying = true
         mView.showLoading(true)
-        val callApi = ApiInterface.instance.getRecent(currentPage)
+        val callApi = ApiInterface.instance.searchArticles(query,currentPage)
         callApi.enqueue(object : Callback<ResponseModel> {
             override fun onFailure(call: Call<ResponseModel>, t: Throwable) {
                 mView.errorToast("Error getting response")
@@ -57,7 +50,7 @@ class MainPresenter (private val mView : MainContract.View) : MainContract.Prese
         })
     }
 
-    override fun saveList(list: List<NewsModel>, context : Context) {
-        Storage.getInstance(context.applicationContext).saveRecentNews(list)
+    override fun saveList(list: List<NewsModel>, context: Context) {
+        Storage.getInstance(context.applicationContext).saveRecentSearchQuery(list)
     }
 }
