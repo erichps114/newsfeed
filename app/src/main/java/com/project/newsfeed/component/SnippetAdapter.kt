@@ -11,8 +11,11 @@ import com.project.newsfeed.R
 import com.project.newsfeed.WebViewActivity
 import com.project.newsfeed.model.NewsModel
 import kotlinx.android.synthetic.main.news_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SnippetAdapter(private val mList : List<NewsModel>, val context : Context) : RecyclerView.Adapter<NewsViewHolder>(){
+    private val calendar = Calendar.getInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         return NewsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.news_item,parent,false))
     }
@@ -23,11 +26,14 @@ class SnippetAdapter(private val mList : List<NewsModel>, val context : Context)
         val model = mList[position]
         holder.title.text = model.headline.main
         holder.snippet.text = model.snippet
-        holder.date.text = model.pub_date
+
+        val date = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(model.pub_date)
+        calendar.time = date
+        holder.date.text = ("${calendar.get(Calendar.DAY_OF_MONTH)} / ${calendar.getDisplayName(Calendar.MONTH,Calendar.SHORT,Locale.getDefault())}")
         if (model.multimedia.isNotEmpty())
             Glide.with(holder.itemView).load("http://www.nytimes.com/${model.multimedia[0].url}" ).into(holder.thumbnail)
         else {
-            holder.thumbnail.setImageResource(R.mipmap.ic_launcher)
+            holder.thumbnail.setImageResource(android.R.color.transparent)
         }
 
         holder.itemView.setOnClickListener {
