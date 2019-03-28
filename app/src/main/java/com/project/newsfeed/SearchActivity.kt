@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.project.newsfeed.component.SnippetAdapter
@@ -59,7 +60,7 @@ class SearchActivity : AppCompatActivity(), SearchContract.View {
 
 
     override fun showLoading(isShow: Boolean) {
-
+        loadingView.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     override fun onDataResult(list: List<NewsModel>, totalResult: Int) {

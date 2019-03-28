@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.project.newsfeed.component.SnippetAdapter
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun showLoading(isShow: Boolean) {
-        //TODO : Show loading
+        loadingView.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     override fun errorToast(message: String) {

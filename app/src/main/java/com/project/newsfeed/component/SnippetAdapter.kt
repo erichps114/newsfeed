@@ -25,9 +25,9 @@ class SnippetAdapter(private val mList : List<NewsModel>, val context : Context)
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val model = mList[position]
         holder.title.text = model.headline.main
-        holder.snippet.text = model.snippet
+        holder.snippet.text = ("\"${model.snippet}")
 
-        val date = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(model.pub_date)
+        val date = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ",Locale.getDefault()).parse(model.pub_date)
         calendar.time = date
         holder.date.text = ("${calendar.get(Calendar.DAY_OF_MONTH)} / ${calendar.getDisplayName(Calendar.MONTH,Calendar.SHORT,Locale.getDefault())}")
         if (model.multimedia.isNotEmpty())
@@ -48,8 +48,8 @@ class SnippetAdapter(private val mList : List<NewsModel>, val context : Context)
 }
 
 class NewsViewHolder(v : View) : RecyclerView.ViewHolder(v){
-    val title = v.title
-    val snippet = v.detail
-    val thumbnail = v.thumbnail
-    val date = v.date
+    val title = v.title!!
+    val snippet = v.detail!!
+    val thumbnail = v.thumbnail!!
+    val date = v.date!!
 }
