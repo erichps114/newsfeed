@@ -1,5 +1,6 @@
 package com.project.newsfeed
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setDefaultKeyMode(Activity.DEFAULT_KEYS_SEARCH_LOCAL)
 
         val itemPerRow = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 1 else 4
         rvFeed.layoutManager = GridLayoutManager(this,itemPerRow)
@@ -46,7 +48,15 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId ){
-            R.id.favorite ->Intent(this, FavoriteActivity::class.java).also{startActivity(it)}
+            R.id.favorite ->{
+                Intent(this, FavoriteActivity::class.java).also{startActivity(it)}
+                return true
+            }
+
+            R.id.search -> {
+                super.onSearchRequested()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
