@@ -33,6 +33,8 @@ class SnippetAdapter(private val mList : List<NewsModel>, val context : Context)
         holder.itemView.setOnClickListener {
             Intent(context,WebViewActivity::class.java).also {
                 it.putExtra("news_url", model.web_url)
+                it.putExtra("currentPosition",position)
+                it.putExtra("callingActivity",context.javaClass.simpleName)
                 context.startActivity(it)
             }
         }

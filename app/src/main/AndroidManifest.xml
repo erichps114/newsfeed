@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".WebViewActivity"/>
+        <activity android:name=".FavoriteActivity"
+        android:label="Favorites"/>
     </application>
 
 </manifest>

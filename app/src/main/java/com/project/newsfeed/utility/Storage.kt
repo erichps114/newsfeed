@@ -10,17 +10,20 @@ class Storage(private val context : Context) {
 
     private val gson = Gson()
     private val mRecentNews = mutableListOf<NewsModel>()
-    private val mFavoriteNews = mutableSetOf<NewsModel>()
     fun getRecentlySavedNews() : List<NewsModel> {
         if (mRecentNews.isNotEmpty()) return mRecentNews.toList()
         val typeToken = object : TypeToken<List<NewsModel>>(){}.type
         return gson.fromJson<List<NewsModel>>(context.getDefaultPreferences().getValue("recent","[]"),typeToken).orEmpty()
     }
 
-    fun getFavoriteNews() : List<NewsModel> {
-        if (mFavoriteNews.isNotEmpty()) return mFavoriteNews.toList()
+    fun getFavoriteNews() : HashSet<NewsModel> {
         val typeToken = object : TypeToken<HashSet<NewsModel>>(){}.type
-        return gson.fromJson<HashSet<NewsModel>>(context.getDefaultPreferences().getValue("favorite","[]"),typeToken).orEmpty().toList()
+        return gson.fromJson<HashSet<NewsModel>>(context.getDefaultPreferences().getValue("favorite","[]"),typeToken)
+    }
+
+    fun getCached() : HashSet<NewsModel> {
+        val typeToken = object : TypeToken<HashSet<NewsModel>>(){}.type
+        return gson.fromJson<HashSet<NewsModel>>(context.getDefaultPreferences().getValue("cached","[]"),typeToken)
     }
 
     fun saveRecentNews (list : List<NewsModel>){
@@ -30,17 +33,21 @@ class Storage(private val context : Context) {
         context.getDefaultPreferences().setValue("recent",jsonRep)
     }
 
-    fun saveFavoriteNews (list : List<NewsModel>){
-        mFavoriteNews.clear()
-        mFavoriteNews.addAll(list)
-        val jsonRep = gson.toJson(list)
+    fun saveFavoriteNews (news : NewsModel){
+        val set = getFavoriteNews()
+        set.add(news)
+        val jsonRep = gson.toJson(set)
         context.getDefaultPreferences().setValue("favorite",jsonRep)
     }
 
-    fun getCached() : HashSet<NewsModel> {
-        val typeToken = object : TypeToken<HashSet<NewsModel>>(){}.type
-        return gson.fromJson<HashSet<NewsModel>>(context.getDefaultPreferences().getValue("cached","[]"),typeToken)
+    fun removeFavoriteNews (news : NewsModel){
+        val set = getFavoriteNews()
+        set.remove(news)
+        val jsonRep = gson.toJson(set)
+        context.getDefaultPreferences().setValue("favorite",jsonRep)
     }
+
+
 
     fun saveCached (news : NewsModel){
         val set = getCached()

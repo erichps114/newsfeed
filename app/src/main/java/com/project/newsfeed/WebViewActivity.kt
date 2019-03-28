@@ -9,9 +9,11 @@ import com.project.newsfeed.component.SwipeListener
 import com.project.newsfeed.model.NewsModel
 import com.project.newsfeed.utility.Storage
 import com.project.newsfeed.utility.info
+import com.project.newsfeed.utility.toast
 import kotlinx.android.synthetic.main.activity_webview.*
 
 class WebViewActivity : AppCompatActivity(), SwipeListener {
+    private val storage by lazy {Storage.getInstance(applicationContext)}
     private var mList : List<NewsModel> = mutableListOf()
     private var currentPosition = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +37,24 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
             currentPosition = intent.getIntExtra("currentPosition",0)
         }
 
-        mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
+        if (intent.hasExtra("callingActivity")){
+            if (intent.getStringExtra("callingActivity").contains("FavoriteActivity"))
+                mList = Storage.getInstance(applicationContext).getFavoriteNews().toList()
+            else
+                mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
+        } else {
+            mList = Storage.getInstance(applicationContext).getRecentlySavedNews()
+        }
 
         favoriteIcon.setOnClickListener {
-
+            val news = mList[currentPosition]
+            if (storage.getFavoriteNews().contains(news)){
+                storage.removeFavoriteNews(news)
+                toast("News removed from favorites")
+            } else {
+                storage.saveFavoriteNews(news)
+                toast("News added to favorites")
+            }
         }
 
     }
@@ -55,13 +71,5 @@ class WebViewActivity : AppCompatActivity(), SwipeListener {
             currentPosition--
             mWebView.loadUrl(mList[currentPosition].web_url)
         }
-    }
-
-    override fun onSwipeTop() {
-        info("swipe top")
-    }
-
-    override fun onSwipeBottom() {
-        info("swipe bottom")
     }
 }

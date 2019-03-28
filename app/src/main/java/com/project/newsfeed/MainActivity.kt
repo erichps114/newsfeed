@@ -1,7 +1,10 @@
 package com.project.newsfeed
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.project.newsfeed.component.SnippetAdapter
@@ -34,6 +37,18 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         }
 
         onLoadMore()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId ){
+            R.id.favorite ->Intent(this, FavoriteActivity::class.java).also{startActivity(it)}
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun onLoadMore(isForceRefresh : Boolean = false){

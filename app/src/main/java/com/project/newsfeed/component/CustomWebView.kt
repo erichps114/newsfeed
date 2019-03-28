@@ -43,10 +43,8 @@ class CustomWebView : WebView{
                     }
                 } else if (Math.abs(diffY) > swipeThreshold && Math.abs(velocityY) > swipeVelocityThreshold) {
                     if (diffY > 0) {
-                        swipeListener?.onSwipeBottom()
                         flingScroll(0,-2000)
                     } else {
-                        swipeListener?.onSwipeTop()
                         flingScroll(0,2000)
                     }
                     result = false
@@ -68,6 +66,4 @@ class CustomWebView : WebView{
 interface SwipeListener{
     fun onSwipeLeft()
     fun onSwipeRight()
-    fun onSwipeTop()
-    fun onSwipeBottom()
 }

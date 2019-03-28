@@ -15,9 +15,14 @@ import retrofit2.Response
 class MainPresenter (private val mView : MainContract.View) : MainContract.Presenter {
     private var currentPage = 0
     private var isQuerying = false
+    private var isCacheLoaded = false
     override fun getRecentNews(context: Context,isForceRefresh : Boolean) {
-        if (!context.isConnected()){
+        if (!context.isConnected() ){
+            if(isCacheLoaded){
+                mView.onDataResult(mutableListOf(),0)
+            }
             info("Load cache")
+            isCacheLoaded = true
             val cachedNews = Storage.getInstance(context).getCached().toList()
             mView.onDataResult(cachedNews,cachedNews.size)
             return
